@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-
+	fmt.Println("=======Project starting=======")
 	r := mux.NewRouter()
 	// r.Host("http://localhost:5000/")
 	// r.Methods("GET", "POST")
@@ -22,7 +22,7 @@ func main() {
 	// r.Use(cors)
 
 	r.HandleFunc("/login", Login).Methods("POST")
-	fmt.Println("=======Project starting=======")
+
 	http.ListenAndServe(":4300", r)
 
 }

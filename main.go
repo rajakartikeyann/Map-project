@@ -2,35 +2,27 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	srv "task/login/service"
+	db "task/mongo"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	fmt.Println("=======Project starting=======")
+	fmt.Println("=======Project On Live=======")
 	r := mux.NewRouter()
-	// r.Host("http://localhost:5000/")
-	// r.Methods("GET", "POST")
-
-	// cors := handlers.CORS(
-	// 	handlers.AllowedOrigins([]string{"*"}),
-	// 	handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-	// 	handlers.AllowedHeaders([]string{"Content-Type"}),
-	// )
-	// r.Use(cors)
-
-	r.HandleFunc("/login", Login).Methods("POST")
-
+	err := db.MongoConnect()
+	if err != nil {
+		fmt.Println("Mongo server not Connected :", err)
+	}
+	cors := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type"}),
+	)
+	r.Use(cors)
+	r.HandleFunc("/login", srv.Login)
 	http.ListenAndServe(":4300", r)
-
-}
-func Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("INSIDE LOGIN")
-	vars := mux.Vars(r)
-	fmt.Println(vars["name"], vars["page"]) // the page
-
-	byte, _ := ioutil.ReadAll(r.Body)
-	fmt.Println("****************", string(byte))
 }
